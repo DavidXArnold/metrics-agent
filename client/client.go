@@ -21,15 +21,13 @@ import (
 	"time"
 
 	log "github.com/sirupsen/logrus"
-
+	//nolint gosec
 	"crypto/md5"
 
 	"github.com/cloudability/metrics-agent/measurement"
 	"github.com/cloudability/metrics-agent/util"
 	"github.com/cloudability/metrics-agent/version"
 )
-
-//nolint gosec
 
 const defaultBaseURL = "https://metrics-collector.cloudability.com"
 const defaultTimeout = 1 * time.Minute

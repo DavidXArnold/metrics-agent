@@ -56,6 +56,7 @@ type KubeAgentConfig struct {
 	nodeRetrievalMethod   string
 	OutboundProxyAuth     string
 	OutboundProxy         string
+	PrometheusURL         string
 	provisioningID        string
 	RetrieveNodeSummaries bool
 	ForceKubeProxy        bool
@@ -95,7 +96,7 @@ func CollectKubeMetrics(config KubeAgentConfig) {
 
 	log.Infof("Starting Cloudability Kubernetes Metric Agent version: %v", cldyVersion.VERSION)
 
-	validateMetricCollectionConfig(config.RetrieveNodeSummaries, config.CollectHeapsterExport)
+	validateMetricCollectionConfig(&config)
 
 	// Create k8s agent
 	kubeAgent := newKubeAgent(config)
@@ -155,16 +156,23 @@ func CollectKubeMetrics(config KubeAgentConfig) {
 
 }
 
-func validateMetricCollectionConfig(retrieveNodeSummaries bool, collectHeapsterExport bool) {
-	if !retrieveNodeSummaries && !collectHeapsterExport {
+func validateMetricCollectionConfig(config *KubeAgentConfig) {
+	if len(config.PrometheusURL) > 0 {
+		log.Infof("Prometheus URL: %v was specified, all other collection methods are disabled.", config.PrometheusURL)
+		config.RetrieveNodeSummaries = false
+		config.CollectHeapsterExport = false
+		return
+
+	}
+	if !config.RetrieveNodeSummaries && !config.CollectHeapsterExport {
 		log.Fatal("Invalid agent configuration. Must either retrieve node summaries or collect from Heapster.")
 	}
-	if retrieveNodeSummaries {
+	if config.RetrieveNodeSummaries {
 		log.Info("Primary metrics will be collected from each node.")
 	}
-	if retrieveNodeSummaries && collectHeapsterExport {
+	if config.RetrieveNodeSummaries && config.CollectHeapsterExport {
 		log.Debug("Collecting Heapster exports if found in cluster.")
-	} else if collectHeapsterExport {
+	} else if config.CollectHeapsterExport {
 		log.Warn("Primary metrics collected from Heapster exports. WARNING: Heapster is being deprecated.")
 	}
 }
@@ -211,6 +219,10 @@ func (ka KubeAgentConfig) collectMetrics(
 	msd, metricSampleDir, err := createMSD(config.msExportDirectory.Name(), sampleStartTime)
 	if err != nil {
 		return err
+	}
+
+	if len(config.PrometheusURL) > 0 {
+		err = DownloadPromData(config, msd, metricSampleDir, nodeSource)
 	}
 
 	if config.RetrieveNodeSummaries {
@@ -561,6 +573,12 @@ func updateConfigWithOverrideURLs(config KubeAgentConfig) KubeAgentConfig {
 
 func ensureMetricServicesAvailable(config KubeAgentConfig) (KubeAgentConfig, error) {
 	var err error
+
+	if len(config.PrometheusURL) > 0 {
+
+		err := validatePrometheus(config, &config.HTTPClient)
+		return config, err
+	}
 
 	if config.RetrieveNodeSummaries {
 		config, err = ensureNodeSource(config)

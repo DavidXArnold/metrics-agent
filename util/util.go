@@ -46,7 +46,7 @@ func TestHTTPConnection(testClient rest.HTTPClient,
 		resp, err := testClient.Do(req)
 		if err != nil {
 			if verbose {
-				log.Warnf("Unable to connect to URL: %s retrying: %v", URL, i+1)
+				log.Warnf("Unable to connect to URL: %s error: %v retrying: %v", URL, err, i+1)
 			}
 			time.Sleep(time.Duration(int64(math.Pow(2, float64(i)))) * time.Second)
 			continue

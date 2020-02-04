@@ -43,6 +43,12 @@ func init() {
 		"Kubernetes Cluster Name - required this must be unique to every cluster.",
 	)
 	kubernetesCmd.PersistentFlags().StringVar(
+		&config.PrometheusURL,
+		"prometheus_url",
+		"",
+		"URL to connect to a running Prometheus instance. - when set all other collection methods are disabled (Heapster, kubelet nodesource etc..).",
+	)
+	kubernetesCmd.PersistentFlags().StringVar(
 		&config.HeapsterOverrideURL,
 		"heapster_override_url",
 		"",
@@ -124,6 +130,7 @@ func init() {
 	//nolint gas
 	_ = viper.BindPFlag("api_key", kubernetesCmd.PersistentFlags().Lookup("api_key"))
 	_ = viper.BindPFlag("cluster_name", kubernetesCmd.PersistentFlags().Lookup("cluster_name"))
+	_ = viper.BindPFlag("prometheus_url", kubernetesCmd.PersistentFlags().Lookup("prometheus_url"))
 	_ = viper.BindPFlag("heapster_override_url", kubernetesCmd.PersistentFlags().Lookup("heapster_override_url"))
 	_ = viper.BindPFlag("poll_interval", kubernetesCmd.PersistentFlags().Lookup("poll_interval"))
 	_ = viper.BindPFlag("certificate_file", kubernetesCmd.PersistentFlags().Lookup("certificate_file"))
@@ -147,6 +154,7 @@ func init() {
 		APIKey:                viper.GetString("api_key"),
 		ClusterName:           viper.GetString("cluster_name"),
 		CollectHeapsterExport: viper.GetBool("collect_heapster_export"),
+		PrometheusURL:         viper.GetString("prometheus_url"),
 		HeapsterOverrideURL:   viper.GetString("heapster_override_url"),
 		PollInterval:          viper.GetInt("poll_interval"),
 		OutboundProxy:         viper.GetString("outbound_proxy"),

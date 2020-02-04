@@ -44,4 +44,10 @@ spec:
               value: "NNNNNNNNN"
             - name: CLOUDABILITY_POLL_INTERVAL
               value: "180"
+            - name: CLOUDABILITY_PROMETHEUS_URL
+              value: https://staging-prometheus.ops.cldy.zone
+            - name: CLOUDABILITY_LOG_LEVEL
+              value: debug
+            - name: CLOUDABILITY_INSECURE
+              value: "true"
 

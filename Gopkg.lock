@@ -317,6 +317,25 @@
   version = "v1.4.0"
 
 [[projects]]
+  digest = "1:0c309f46274111546d42f4fd41803247f5a2aa71cdb08be959158c22dd2113c1"
+  name = "github.com/prometheus/client_golang"
+  packages = [
+    "api",
+    "api/prometheus/v1",
+  ]
+  pruneopts = ""
+  revision = "76dd6c581988366a52807465d426f83e776128ad"
+  version = "v1.4.0"
+
+[[projects]]
+  digest = "1:78db3ce13f9ddee31de975c9618d2e3a7d06856e0b912c5a9a6ed342599b5bed"
+  name = "github.com/prometheus/common"
+  packages = ["model"]
+  pruneopts = ""
+  revision = "d978bcb1309602d68bb4ba69cf3f8ed900e07308"
+  version = "v0.9.1"
+
+[[projects]]
   digest = "1:b6138c1c8fc6ab555e3ee5b030072d962c39e3eb9be15205263e6101b6c5ad52"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
@@ -572,6 +591,7 @@
     "kubernetes/typed/storage/v1beta1/fake",
     "pkg/api",
     "pkg/api/v1",
+    "pkg/api/v1/node",
     "pkg/api/v1/ref",
     "pkg/apis/admissionregistration",
     "pkg/apis/admissionregistration/v1alpha1",
@@ -632,6 +652,9 @@
   analyzer-version = 1
   input-imports = [
     "github.com/kubernetes/kubernetes/staging/src/k8s.io/client-go/util/retry",
+    "github.com/prometheus/client_golang/api",
+    "github.com/prometheus/client_golang/api/prometheus/v1",
+    "github.com/prometheus/common/model",
     "github.com/sirupsen/logrus",
     "github.com/spf13/cobra",
     "github.com/spf13/viper",
@@ -640,6 +663,7 @@
     "k8s.io/client-go/kubernetes",
     "k8s.io/client-go/kubernetes/fake",
     "k8s.io/client-go/pkg/api/v1",
+    "k8s.io/client-go/pkg/api/v1/node",
     "k8s.io/client-go/rest",
     "k8s.io/client-go/tools/clientcmd",
   ]
